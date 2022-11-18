@@ -53,6 +53,39 @@ describe('ClienteComponent', () => {
     sucess: true
   }
 
+  const respOKCanal : ResultParametros = {
+    result: [
+      {
+        codigoParametro: '0000000001',
+        codigoDominio: '0000000016',
+        descripcion1: '4',
+        descripcion2: 'AFP CORREO',
+        descripcion3: '',
+        descripcion4: '',
+        estado: null
+      },
+      {
+        codigoParametro: '0000000002',
+        codigoDominio: '0000000016',
+        descripcion1: '5',
+        descripcion2: 'AFP TREGISTRO',
+        descripcion3: '',
+        descripcion4: '',
+        estado: null
+      },
+    ],
+    codMessage: 'COD02',
+    message: '',
+    sucess: true
+  }
+
+  const respERRORCanal : ResultParametros = {
+    result: [],
+    codMessage: null,
+    message: '',
+    sucess: true
+  }
+
   beforeEach(fakeAsync(async () => {
     TestBed.configureTestingModule({
       imports: [
@@ -144,4 +177,29 @@ describe('ClienteComponent', () => {
     expect(spyTipoDocumentoError).toHaveBeenCalledWith();
     expect(component.codigoError).toEqual('CODERR');
   });
+
+  it('Consultar servicio parametria canal ok', () => {
+    const spyCanal = spyOn(consultaService, 'getStatusChannel').and.returnValue(
+      new Observable((subscribe) => {
+        subscribe.next(respOKCanal);
+        return subscribe;
+      })
+    )
+    component.getCanal();
+    expect(spyCanal).toHaveBeenCalledWith();
+    expect(component.mensajeCodigoResponse).toEqual('CODIGO OK');
+  });
+
+  it('Consultar servicio parametria canal error', () => {
+    const spyCanal = spyOn(consultaService, 'getStatusChannel').and.returnValue(
+      new Observable((subscribe) => {
+        subscribe.next(respERRORCanal);
+        return subscribe;
+      })
+    )
+    component.getCanal();
+    expect(spyCanal).toHaveBeenCalledWith();
+    expect(component.mensajeCodigoResponse).toEqual('CODIGO NULO O INDEFINIDO');
+  });
+
 });

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Subscription, Observable } from 'rxjs';
 import { Parametros, ResultParametros } from 'src/app/models/parametro.interface';
 import { ConsultaService } from 'src/app/services/consulta.service';
-import { Canal } from 'src/app/shared/constants';
+import { Canal, CodigoMensaje } from 'src/app/shared/constants';
 
 @Component({
   selector: 'app-cliente',
@@ -19,6 +19,7 @@ export class ClienteComponent implements OnInit {
   descripcionTipoDocumento: string;
   tipoDocumentoParametro :Parametros[];
   canalParametro :Parametros[];
+  mensajeCodigoResponse: string;
   codigoResponse: string;
   codigoError: string;
   descripcionCanal: string;
@@ -71,17 +72,25 @@ export class ClienteComponent implements OnInit {
     });
   }
 
-  validarCanal() {
+  validarCodigoCanal(codigoParametroCanal: string) {
     for(const canal of this.canalParametro) {
-      if(canal.descripcion1 === Canal.CANAL_CORREO) {
-        return Canal.CANAL_CORREO;
+      if(canal.codigoParametro === codigoParametroCanal) {
+        return CodigoMensaje.COD_CANAL_CORREO;
       } 
-      else if(canal.descripcion1 === Canal.CANAL_TREGISTRO) {
-        return Canal.CANAL_TREGISTRO;
+      else if(canal.codigoParametro === codigoParametroCanal) {
+        return CodigoMensaje.COD_CANAL_TREGISTRO;
       } 
       else {
-        return Canal.CANAL_AFPNET;
+        return CodigoMensaje.COD_CANAL_AFPNET;
       }
+    }
+  }
+
+  validarMensajeCodigoCanal(codigo: string) {
+    if(codigo !== null && codigo !== undefined){
+      return 'CODIGO OK';
+    } else {
+      return 'CODIGO NULO O INDEFINIDO';
     }
   }
 
@@ -90,7 +99,7 @@ export class ClienteComponent implements OnInit {
     .subscribe(resp =>{
       if(resp.sucess) {
         this.canalParametro = resp.result || [];
-        this.codigoResponse = this.validarCanal();
+        this.mensajeCodigoResponse = this.validarMensajeCodigoCanal(resp.codMessage);
       } else {
         this.codigoResponse = this.returnCodigoError(resp.codMessage);
       }
